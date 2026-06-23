@@ -1,0 +1,69 @@
+name: Bump formula versions
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "agent-body version (e.g. 0.5.12, no v prefix)"
+        required: false
+        type: string
+  repository_dispatch:
+    types: [agent-body-release]
+  schedule:
+  # Poll hourly — bumps tap when agent-body publishes a new release (no cross-repo PAT).
+    - cron: "15 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    name: Update Homebrew formula versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Resolve target version
+        id: ver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            V="${{ github.event.inputs.version }}"
+          elif [ -n "${{ github.event.client_payload.version }}" ]; then
+            V="${{ github.event.client_payload.version }}"
+          else
+            V="$(gh release view --repo autonomic-ai-dev/agent-body --json tagName -q .tagName)"
+          fi
+          V="${V#v}"
+          echo "version=${V}" >> "$GITHUB_OUTPUT"
+          echo "Target version: ${V}"
+
+      - name: Bump Formula/autonomic.rb and autonomic-stack.rb
+        id: bump
+        run: |
+          set -euo pipefail
+          V="${{ steps.ver.outputs.version }}"
+          CURRENT="$(grep -m1 'version "' Formula/autonomic.rb | sed -E 's/.*version "([^"]+)".*/\1/')"
+          if [ "$CURRENT" = "$V" ]; then
+            echo "already_at=${V}" >> "$GITHUB_OUTPUT"
+            echo "Formulas already at ${V}; nothing to do."
+            exit 0
+          fi
+          for f in Formula/autonomic.rb Formula/autonomic-stack.rb; do
+            sed -i.bak -E "s/^  version \"[^\"]+\"/  version \"${V}\"/" "$f"
+            rm -f "${f}.bak"
+          done
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push
+        if: steps.bump.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          V="${{ steps.ver.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/
+          git commit -m "chore: bump formulas to agent-body v${V}"
+          git push

@@ -34,12 +34,14 @@ class AutonomicStack < Formula
       asset = "#{binary}-#{target}"
       # Same as install-all-organs.sh: each organ's latest release (not one shared tag).
       url = "https://github.com/#{repo}/releases/latest/download/#{asset}"
-      dest = bin/binary
+      # Download to buildpath first — bin/ may not exist yet (curl error 23 otherwise).
+      dest = buildpath/binary
       system "curl", "-fsSL", url, "-o", dest
       chmod 0755, dest
+      bin.install dest
     end
 
-    bin.install_symlink bin/"agent-body" => "autonomic"
+    bin.install_symlink "agent-body" => "autonomic"
   end
 
   def post_install

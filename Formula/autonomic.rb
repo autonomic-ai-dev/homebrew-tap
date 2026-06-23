@@ -17,10 +17,12 @@ class Autonomic < Formula
     end
     asset = "agent-body-#{arch}"
     url = "https://github.com/autonomic-ai-dev/agent-body/releases/download/v#{version}/#{asset}"
-    binpath = bin/"agent-body"
-    system "curl", "-fsSL", url, "-o", binpath
-    chmod 0755, binpath
-    bin.install_symlink binpath => "autonomic"
+    # Download to buildpath first — bin/ may not exist yet (curl error 23 otherwise).
+    dest = buildpath/"agent-body"
+    system "curl", "-fsSL", url, "-o", dest
+    chmod 0755, dest
+    bin.install dest
+    bin.install_symlink "agent-body" => "autonomic"
   end
 
   def post_install

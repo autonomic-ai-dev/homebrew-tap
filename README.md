@@ -44,4 +44,20 @@ Release assets match `install-all-organs.sh`:
 
 Linux: use the [curl install script](https://github.com/autonomic-ai-dev/agent-body/blob/master/scripts/install-all-organs.sh).
 
+## Formula version bumps
+
+The tap tracks **agent-body** release version in both formulas (`autonomic` pins that tag; `autonomic-stack` uses it for metadata but each organ binary still comes from `/releases/latest/download/`).
+
+| Trigger | Workflow |
+|---------|----------|
+| Hourly poll | [bump-formula.yml](.github/workflows/bump-formula.yml) compares latest `agent-body` GitHub release |
+| Manual | Actions → **Bump formula versions** → optional version input |
+| On agent-body release | Optional: set `HOMEBREW_TAP_DISPATCH_TOKEN` in agent-body repo secrets (PAT with `repo` on this tap) |
+
+Local bump:
+
+```bash
+./scripts/bump-version.sh 0.5.12
+```
+
 Formulas download GitHub **release binaries**, not source builds. Bump `version` in both `.rb` files when cutting a new stack release.
