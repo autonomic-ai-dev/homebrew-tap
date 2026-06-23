@@ -32,8 +32,9 @@ module AutonomicSetup
         1. Ensure `which autonomic` → #{HOMEBREW_PREFIX}/bin/autonomic (see shadow note above)
         2. agent-brain install --global   (MCP + hooks; copies signed binary to ~/.local/bin on macOS)
         3. Paste ~/.agent_brain/cursor-user-rules.mdc into Cursor Settings → User Rules
-        4. autonomic doctor               (verify organs + workspace)
-        5. autonomic start                (nerves + heart daemons)
+        4. Optional: ~/.agent_brain/cursor-agent-brain-mode.mdc (same place) or `agent-brain mode install --global`
+        5. autonomic doctor               (verify organs + workspace)
+        6. autonomic start                (nerves + heart daemons)
 
       Meta CLI only: brew install autonomic-ai-dev/tap/autonomic
     EOS
