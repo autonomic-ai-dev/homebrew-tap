@@ -1,3 +1,5 @@
+require_relative "autonomic_setup"
+
 class Autonomic < Formula
   desc "Autonomic AI ecosystem manager (meta CLI)"
   homepage "https://github.com/autonomic-ai-dev/agent-body"
@@ -17,7 +19,6 @@ class Autonomic < Formula
     end
     asset = "agent-body-#{arch}"
     url = "https://github.com/autonomic-ai-dev/agent-body/releases/download/v#{version}/#{asset}"
-    # Download to buildpath first — bin/ may not exist yet (curl error 23 otherwise).
     dest = buildpath/"agent-body"
     system "curl", "-fsSL", url, "-o", dest
     chmod 0755, dest
@@ -26,31 +27,11 @@ class Autonomic < Formula
   end
 
   def post_install
-    workspace = Dir.home/".autonomic"
-    return if workspace.directory?
-
-    cli = bin/"autonomic"
-    unless cli.exist?
-      opoo "autonomic binary missing; run `agent-body init` after install."
-      return
-    end
-
-    ohai "Initializing Autonomic workspace at #{workspace}"
-    if quiet_system(cli, "init")
-      ohai "Workspace ready: #{workspace}"
-    else
-      opoo <<~EOS
-        autonomic init exited non-zero (formula install succeeded).
-        Finish setup manually: #{cli} init
-      EOS
-    end
+    AutonomicSetup.run_workspace_init(bin)
   end
 
   def caveats
-    <<~EOS
-      Installed: agent-body + autonomic symlink in #{HOMEBREW_PREFIX}/bin
-      Full stack: brew install autonomic-ai-dev/tap/autonomic-stack
-    EOS
+    AutonomicSetup.shadow_warning + AutonomicSetup.finish_setup_caveats(meta_only: true)
   end
 
   test do
