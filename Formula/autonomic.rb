@@ -26,7 +26,24 @@ class Autonomic < Formula
   end
 
   def post_install
-    system "#{bin}/autonomic", "init" unless (Dir.home/".autonomic").directory?
+    workspace = Dir.home/".autonomic"
+    return if workspace.directory?
+
+    cli = bin/"autonomic"
+    unless cli.exist?
+      opoo "autonomic binary missing; run `agent-body init` after install."
+      return
+    end
+
+    ohai "Initializing Autonomic workspace at #{workspace}"
+    if quiet_system(cli, "init")
+      ohai "Workspace ready: #{workspace}"
+    else
+      opoo <<~EOS
+        autonomic init exited non-zero (formula install succeeded).
+        Finish setup manually: #{cli} init
+      EOS
+    end
   end
 
   def caveats
