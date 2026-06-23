@@ -1,7 +1,9 @@
 # Shared setup notes for autonomic Homebrew formulas.
+require "pathname"
+
 module AutonomicSetup
   def self.shadow_warning
-    local = Dir.home/".local/bin"
+    local = Pathname.new(Dir.home)/".local/bin"
     return "" unless (local/"autonomic").exist? || (local/"agent-body").exist?
 
     <<~EOS
@@ -40,21 +42,21 @@ module AutonomicSetup
     EOS
   end
 
-  def self.run_workspace_init(bin)
-    workspace = Dir.home/".autonomic"
+  def self.run_workspace_init(formula)
+    workspace = Pathname.new(Dir.home)/".autonomic"
     return if workspace.directory?
 
-    cli = bin/"autonomic"
+    cli = formula.bin/"autonomic"
     unless cli.exist?
-      opoo "autonomic binary missing; run `agent-body init` after install."
+      formula.opoo "autonomic binary missing; run `agent-body init` after install."
       return
     end
 
-    ohai "Initializing Autonomic workspace at #{workspace}"
-    if quiet_system(cli, "init")
-      ohai "Workspace ready: #{workspace}"
+    formula.ohai "Initializing Autonomic workspace at #{workspace}"
+    if formula.quiet_system(cli, "init")
+      formula.ohai "Workspace ready: #{workspace}"
     else
-      opoo <<~EOS
+      formula.opoo <<~EOS
         autonomic init exited non-zero (formula install succeeded).
         Finish setup manually: #{cli} init
       EOS

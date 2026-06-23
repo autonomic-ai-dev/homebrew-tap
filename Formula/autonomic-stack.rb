@@ -44,7 +44,7 @@ class AutonomicStack < Formula
   end
 
   def post_install
-    AutonomicSetup.run_workspace_init(bin)
+    AutonomicSetup.run_workspace_init(self)
   end
 
   def caveats
