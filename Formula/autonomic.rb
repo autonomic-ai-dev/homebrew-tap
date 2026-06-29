@@ -4,7 +4,7 @@ class Autonomic < Formula
   desc "Autonomic AI ecosystem manager (meta CLI)"
   homepage "https://github.com/autonomic-ai-dev/agent-body"
   url "https://github.com/autonomic-ai-dev/agent-body"
-  version "0.5.14"
+  version "0.5.15"
   license "MIT"
 
   depends_on "curl"
