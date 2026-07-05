@@ -4,7 +4,7 @@ class AutonomicStack < Formula
   desc "Full Autonomic AI organ stack (meta CLI + all peripheral binaries)"
   homepage "https://github.com/autonomic-ai-dev/agent-body"
   url "https://github.com/autonomic-ai-dev/agent-body"
-  version "0.5.17"
+  version "0.6.0"
   license "MIT"
 
   depends_on "curl"
