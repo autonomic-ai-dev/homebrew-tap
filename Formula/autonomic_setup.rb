@@ -10,7 +10,7 @@ module AutonomicSetup
 
       ⚠  PATH shadow: #{local}/autonomic exists from a prior curl install.
          Your shell will use that copy instead of Homebrew until you remove it:
-           rm -f #{local}/{autonomic,agent-body,agent-brain,agent-spine,agent-heart,agent-nerves,agent-muscle,agent-immune,agent-eyes,agent-mouth}
+           rm -f #{local}/{autonomic,agent-body,agent-brain,agent-spine,agent-heart,agent-nerves,agent-muscle,agent-immune,agent-eyes,agent-mouth,agent-tui}
          Or put #{HOMEBREW_PREFIX}/bin before ~/.local/bin in PATH.
     EOS
   end

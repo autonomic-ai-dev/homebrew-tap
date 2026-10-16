@@ -1,46 +1,33 @@
 require_relative "autonomic_setup"
 
 class AutonomicStack < Formula
-  desc "Full Autonomic AI organ stack (meta CLI + all peripheral binaries)"
+  desc "Full Autonomic AI organ stack (all peripheral binaries + NATS server)"
   homepage "https://github.com/autonomic-ai-dev/agent-body"
-  url "https://github.com/autonomic-ai-dev/agent-body"
-  version "0.6.1"
+  version "1.0.0-beta.1"
   license "MIT"
 
-  depends_on "curl"
   depends_on "nats-server"
+  depends_on "autonomic-ai-dev/tap/autonomic"
+  depends_on "autonomic-ai-dev/tap/agent-brain"
+  depends_on "autonomic-ai-dev/tap/agent-spine"
+  depends_on "autonomic-ai-dev/tap/agent-heart"
+  depends_on "autonomic-ai-dev/tap/agent-nerves"
+  depends_on "autonomic-ai-dev/tap/agent-muscle"
+  depends_on "autonomic-ai-dev/tap/agent-immune"
+  depends_on "autonomic-ai-dev/tap/agent-eyes"
+  depends_on "autonomic-ai-dev/tap/agent-mouth"
+  depends_on "autonomic-ai-dev/tap/agent-tui"
 
-  ORGANS = {
-    "autonomic-ai-dev/agent-body" => "agent-body",
-    "autonomic-ai-dev/agent-brain" => "agent-brain",
-    "autonomic-ai-dev/agent-spine" => "agent-spine",
-    "autonomic-ai-dev/agent-heart" => "agent-heart",
-    "autonomic-ai-dev/agent-nerves" => "agent-nerves",
-    "autonomic-ai-dev/agent-muscle" => "agent-muscle",
-    "autonomic-ai-dev/agent-immune" => "agent-immune",
-    "autonomic-ai-dev/agent-eyes" => "agent-eyes",
-    "autonomic-ai-dev/agent-mouth" => "agent-mouth",
-  }.freeze
+  # Minimal source payload for formula requirement
+  url "https://github.com/autonomic-ai-dev/agent-body/releases/download/v1.0.0-beta.1/agent-body-aarch64-apple-darwin"
+  sha256 "a5b51aa4abf88880c10b9176757439c6ea7ac61e0e9d063ddb893188273ffdf1"
 
   def install
-    odie "autonomic-stack supports macOS only; use curl install on Linux" unless OS.mac?
+    odie "autonomic-stack supports macOS Apple Silicon (arm64) only" if !OS.mac? || !Hardware::CPU.arm?
 
-    target = if Hardware::CPU.arm?
-      "aarch64-apple-darwin"
-    else
-      "x86_64-apple-darwin"
-    end
-
-    ORGANS.each do |repo, binary|
-      asset = "#{binary}-#{target}"
-      url = "https://github.com/#{repo}/releases/latest/download/#{asset}"
-      dest = buildpath/binary
-      system "curl", "-fsSL", url, "-o", dest
-      chmod 0755, dest
-      bin.install dest
-    end
-
-    bin.install_symlink "agent-body" => "autonomic"
+    # Marker for complete stack
+    (var/"autonomic").mkpath
+    touch var/"autonomic/.stack-installed"
   end
 
   def post_install
@@ -52,8 +39,8 @@ class AutonomicStack < Formula
   end
 
   test do
-    assert_predicate bin/"agent-body", :exist?
-    assert_predicate bin/"agent-brain", :exist?
-    shell_output("#{bin}/autonomic --version")
+    assert_predicate HOMEBREW_PREFIX/"bin/autonomic", :exist?
+    assert_predicate HOMEBREW_PREFIX/"bin/agent-brain", :exist?
+    assert_predicate HOMEBREW_PREFIX/"bin/agent-spine", :exist?
   end
 end
