@@ -25,9 +25,11 @@ class AutonomicStack < Formula
   def install
     odie "autonomic-stack supports macOS Apple Silicon (arm64) only" if !OS.mac? || !Hardware::CPU.arm?
 
-    # Marker for complete stack
-    (var/"autonomic").mkpath
-    touch var/"autonomic/.stack-installed"
+    (bin/"autonomic-stack").write <<~EOS
+      #!/usr/bin/env bash
+      exec "#{HOMEBREW_PREFIX}/bin/autonomic" status "$@"
+    EOS
+    chmod 0755, bin/"autonomic-stack"
   end
 
   def post_install

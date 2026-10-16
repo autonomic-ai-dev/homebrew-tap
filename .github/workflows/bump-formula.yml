@@ -2,15 +2,10 @@ name: Bump formula versions
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: "agent-body version (e.g. 0.5.12, no v prefix)"
-        required: false
-        type: string
   repository_dispatch:
-    types: [agent-body-release]
+    types: [organ-release, agent-body-release, release]
   schedule:
-  # Poll hourly — bumps tap when agent-body publishes a new release (no cross-repo PAT).
+    # Hourly check for new releases across all organs
     - cron: "15 * * * *"
 
 permissions:
@@ -23,47 +18,23 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Resolve target version
-        id: ver
+      - name: Update all organ formulas
+        id: update
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -euo pipefail
-          if [ -n "${{ github.event.inputs.version }}" ]; then
-            V="${{ github.event.inputs.version }}"
-          elif [ -n "${{ github.event.client_payload.version }}" ]; then
-            V="${{ github.event.client_payload.version }}"
-          else
-            V="$(gh release view --repo autonomic-ai-dev/agent-body --json tagName -q .tagName)"
-          fi
-          V="${V#v}"
-          echo "version=${V}" >> "$GITHUB_OUTPUT"
-          echo "Target version: ${V}"
-
-      - name: Bump Formula/autonomic.rb and autonomic-stack.rb
-        id: bump
-        run: |
-          set -euo pipefail
-          V="${{ steps.ver.outputs.version }}"
-          CURRENT="$(grep -m1 'version "' Formula/autonomic.rb | sed -E 's/.*version "([^"]+)".*/\1/')"
-          if [ "$CURRENT" = "$V" ]; then
-            echo "already_at=${V}" >> "$GITHUB_OUTPUT"
-            echo "Formulas already at ${V}; nothing to do."
-            exit 0
-          fi
-          for f in Formula/autonomic.rb Formula/autonomic-stack.rb; do
-            sed -i.bak -E "s/^  version \"[^\"]+\"/  version \"${V}\"/" "$f"
-            rm -f "${f}.bak"
-          done
-          echo "changed=true" >> "$GITHUB_OUTPUT"
+          chmod +x scripts/update-formulas.sh
+          ./scripts/update-formulas.sh
 
       - name: Commit and push
-        if: steps.bump.outputs.changed == 'true'
         run: |
           set -euo pipefail
-          V="${{ steps.ver.outputs.version }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Formula/
-          git commit -m "chore: bump formulas to agent-body v${V}"
-          git push
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add Formula/ Aliases/
+            git commit -m "chore: bump formulas to latest release digests"
+            git push
+          else
+            echo "No formula changes needed."
+          fi
