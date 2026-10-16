@@ -1,83 +1,67 @@
 # autonomic-ai-dev/homebrew-tap
 
-Homebrew tap for the Autonomic AI stack on macOS.
+Official Homebrew tap for the Autonomic AI ecosystem on macOS (Apple Silicon arm64).
 
-## Tap naming (must match GitHub)
-
-| What you type | GitHub repository required |
-|---------------|----------------------------|
-| `brew tap autonomic-ai-dev/tap` | **`autonomic-ai-dev/homebrew-tap`** |
-
-Homebrew strips the `homebrew-` prefix: repo `homebrew-tap` → tap slug `autonomic-ai-dev/tap`.  
-If the GitHub repo is named anything else (e.g. `homebrew-autonomic`), use:
+## Quick Start
 
 ```bash
-brew tap autonomic-ai-dev/tap https://github.com/autonomic-ai-dev/homebrew-tap
-```
-
-## Install
-
-```bash
+# Tap the repository
 brew tap autonomic-ai-dev/tap
-brew install autonomic          # meta CLI only (agent-body + autonomic symlink)
-brew install autonomic-stack    # all organ binaries + nats-server dependency
+
+# Install the complete stack (all 10 organs + NATS server)
+brew install autonomic-stack
+
+# Or install individual utilities:
+brew install autonomic      # Meta CLI & workspace manager
+brew install agent-brain    # Cognitive graph, MCP server, durable memory
+brew install agent-spine    # Workflow DAG engine & execution controller
+brew install agent-heart    # Scheduled GC, token budget gate, heartbeat
+brew install agent-nerves   # NATS / JetStream pub-sub event bridge
+brew install agent-muscle   # Sandboxed command execution & training backend
+brew install agent-immune   # Security scanner & policy enforcer
+brew install agent-eyes     # Visual perception & DOM inspector
+brew install agent-mouth    # AST command validator & Slack approvals
+brew install agent-tui      # Terminal user interface dashboard
 ```
 
-Fully qualified (without tapping first):
+You can also install directly without tapping first:
 
 ```bash
-brew install autonomic-ai-dev/tap/autonomic
 brew install autonomic-ai-dev/tap/autonomic-stack
+brew install autonomic-ai-dev/tap/autonomic
+brew install autonomic-ai-dev/tap/agent-brain
 ```
 
-## Formulas
+## Available Formulas
 
-| Formula | Installs |
-|---------|----------|
-| `autonomic` | `agent-body` + `autonomic` symlink |
-| `autonomic-stack` | All nine organ release binaries + `depends_on nats-server` |
+| Formula | Description | Provides |
+|---------|-------------|----------|
+| `autonomic-stack` | Full organ stack + NATS server dependency | Meta-package pulling all 10 organ binaries + `nats-server` |
+| `autonomic` | Autonomic ecosystem manager (meta CLI) | `autonomic`, `agent-body` |
+| `agent-body` | Alias wrapper pointing to `autonomic` | `agent-body`, `autonomic` |
+| `agent-brain` | Local cognitive graph, MCP server & durable memory | `agent-brain` |
+| `agent-spine` | Workflow DAG engine & execution controller | `agent-spine` |
+| `agent-heart` | Heartbeat monitor, budget gate & GC daemon | `agent-heart` |
+| `agent-nerves` | NATS / JetStream pub-sub event bridge | `agent-nerves` |
+| `agent-muscle` | Sandboxed execution & training daemon | `agent-muscle` |
+| `agent-immune` | Security scanner & policy enforcement | `agent-immune` |
+| `agent-eyes` | Visual perception, screen capture & DOM index | `agent-eyes` |
+| `agent-mouth` | AST validation, Slack notifications & approvals | `agent-mouth` |
+| `agent-tui` | Terminal user interface dashboard | `agent-tui` |
 
-Release assets match `install-all-organs.sh`:
+## Post-Install Setup
 
-- **`autonomic`**: pinned `agent-body` tag `v{version}` → `{binary}-{arch}-apple-darwin`
-- **`autonomic-stack`**: each organ from that repo's **`/releases/latest/download/`** (organs version independently)
+1. **Verify Homebrew PATH**:
+   If you previously installed via `curl | bash`, binaries in `~/.local/bin` may shadow Homebrew:
+   ```bash
+   rm -f ~/.local/bin/{autonomic,agent-body,agent-brain,agent-spine,agent-heart,agent-nerves,agent-muscle,agent-immune,agent-eyes,agent-mouth,agent-tui}
+   which autonomic   # Should point to /opt/homebrew/bin/autonomic
+   ```
 
-Linux: use the [curl install script](https://github.com/autonomic-ai-dev/agent-body/blob/master/scripts/install-all-organs.sh).
-
-## Migrating from curl
-
-If you previously ran `install-all-organs.sh`, binaries live in `~/.local/bin` and **shadow** Homebrew on `PATH`. After `brew install autonomic-stack`:
-
-```bash
-rm -f ~/.local/bin/{autonomic,agent-body,agent-brain,agent-spine,agent-heart,agent-nerves,agent-muscle,agent-immune,agent-eyes,agent-mouth}
-which autonomic   # expect /opt/homebrew/bin/autonomic
-```
-
-## What Homebrew sets up vs manual steps
-
-| Step | Homebrew | You |
-|------|----------|-----|
-| Organ binaries | ✓ | |
-| `nats-server` (stack formula) | ✓ | |
-| `~/.autonomic` workspace (`autonomic init`) | ✓ if missing | |
-| Cursor MCP + hooks | | `agent-brain install --global` |
-| Daemon start | | `autonomic start` |
-| Full health check | | `autonomic doctor` |
-
-## Formula version bumps
-
-The tap tracks **agent-body** release version in both formulas (`autonomic` pins that tag; `autonomic-stack` uses it for metadata but each organ binary still comes from `/releases/latest/download/`).
-
-| Trigger | Workflow |
-|---------|----------|
-| Hourly poll | [bump-formula.yml](.github/workflows/bump-formula.yml) compares latest `agent-body` GitHub release |
-| Manual | Actions → **Bump formula versions** → optional version input |
-| On agent-body release | Optional: set `HOMEBREW_TAP_DISPATCH_TOKEN` in agent-body repo secrets (PAT with `repo` on this tap) |
-
-Local bump:
-
-```bash
-./scripts/bump-version.sh 0.5.12
-```
-
-Formulas download GitHub **release binaries**, not source builds. Bump `version` in both `.rb` files when cutting a new stack release.
+2. **Initialize Workspace & Daemons**:
+   ```bash
+   autonomic init               # Initialize ~/.autonomic workspace
+   agent-brain install --global # Configure global MCP hooks and editor permissions
+   autonomic start              # Launch NATS + nerves + heart daemons
+   autonomic doctor             # Health check across organs
+   ```
