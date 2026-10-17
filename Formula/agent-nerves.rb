@@ -1,12 +1,12 @@
 class AgentNerves < Formula
   desc "NATS / JetStream pub-sub event bridge and message bus for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-nerves"
-  version "1.0.0-beta.3"
+  version "1.0.0-beta.3.1"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-nerves/releases/download/v1.0.0-beta.3/agent-nerves-aarch64-apple-darwin"
-    sha256 "d2c80de18e6241752e76adaa666a38d057209dd8bb93c223bbe5615d6a1921db"
+    url "https://github.com/autonomic-ai-dev/agent-nerves/releases/download/v1.0.0-beta.3.1/agent-nerves-aarch64-apple-darwin"
+    sha256 "381a9ef7562a5749cc233212d14c3233fab281db93a379a63ebbc1f5254dd69b"
   end
 
   def install

@@ -3,12 +3,12 @@ require_relative "autonomic_setup"
 class Autonomic < Formula
   desc "Ecosystem manager (meta CLI) for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-body"
-  version "1.0.0-beta.3"
+  version "1.0.0-beta.3.1"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-body/releases/download/v1.0.0-beta.3/agent-body-aarch64-apple-darwin"
-    sha256 "eb92d3c0ce9368027c3f2fef337abcb8c02dc306713bc178a697b7c7fdf906c7"
+    url "https://github.com/autonomic-ai-dev/agent-body/releases/download/v1.0.0-beta.3.1/agent-body-aarch64-apple-darwin"
+    sha256 "4f068d07d5003bd399806b3e802b51aae2392903d7e7b64afe8ba1123a5a8813"
   end
 
   def install
