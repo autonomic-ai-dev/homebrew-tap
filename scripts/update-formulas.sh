@@ -78,11 +78,11 @@ for item in "${REPOS[@]}"; do
 
 done
 
-echo "==> Determining ecosystem baseline across all organ formulas..."
+echo "==> Determining ecosystem baseline and stack version across all organ formulas..."
 stack_file="${ROOT_DIR}/Formula/autonomic-stack.rb"
 current_stack_version="$(grep -m1 'version "' "$stack_file" | sed -E 's/.*version "([^"]+)".*/\1/' || true)"
 
-ecosystem_baseline="$(python3 -c '
+read -r ecosystem_baseline target_stack_version < <(python3 -c '
 import os, sys, re
 
 formulas = [
@@ -112,6 +112,7 @@ def get_baseline_str(v):
     m = re.match(r"^(\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+\.\d+)?)", v)
     return m.group(1) if m else v
 
+organ_versions = []
 baselines = []
 for f_name in formulas:
     path = os.path.join(formula_dir, f_name)
@@ -123,20 +124,39 @@ for f_name in formulas:
     if m:
         ver = m.group(1)
         base = get_baseline_str(ver)
+        organ_versions.append(ver)
         baselines.append((base, parse_baseline(base)))
 
 if not baselines:
     sys.exit(1)
 
 min_base = min(baselines, key=lambda x: x[1])[0]
-print(min_base)
-' "${ROOT_DIR}/Formula")"
+
+max_patch = 0
+for v in organ_versions:
+    if v.startswith(min_base + "."):
+        patch_suffix = v[len(min_base) + 1:]
+        try:
+            p_num = int(patch_suffix)
+            if p_num > max_patch:
+                max_patch = p_num
+        except ValueError:
+            pass
+
+if max_patch > 0:
+    stack_version = f"{min_base}.{max_patch}"
+else:
+    stack_version = min_base
+
+print(f"{min_base} {stack_version}")
+' "${ROOT_DIR}/Formula")
 
 echo "    Current autonomic-stack version: ${current_stack_version}"
-echo "    Resolved ecosystem baseline:     ${ecosystem_baseline}"
+echo "    Ecosystem baseline:              ${ecosystem_baseline}"
+echo "    Target autonomic-stack version:  ${target_stack_version}"
 
-if [[ "$current_stack_version" != "$ecosystem_baseline" ]]; then
-  echo "==> All organs have reached baseline ${ecosystem_baseline}. Updating autonomic-stack.rb..."
+if [[ "$current_stack_version" != "$target_stack_version" ]]; then
+  echo "==> Updating autonomic-stack.rb to ${target_stack_version}..."
   stack_tag="v${ecosystem_baseline}"
   stack_asset="agent-body-aarch64-apple-darwin"
   stack_sha="$(gh release view "$stack_tag" -R "autonomic-ai-dev/agent-body" --json assets -q ".assets[] | select(.name == \"${stack_asset}\") | .digest" 2>/dev/null || true)"
@@ -152,17 +172,17 @@ if [[ "$current_stack_version" != "$ecosystem_baseline" ]]; then
     fi
   fi
   if [[ -n "$stack_sha" ]]; then
-    sed -i.bak -E "s/^  version \"[^\"]+\"/  version \"${ecosystem_baseline}\"/" "$stack_file"
+    sed -i.bak -E "s/^  version \"[^\"]+\"/  version \"${target_stack_version}\"/" "$stack_file"
     sed -i.bak -E "s/download\/v[^\/]+\//download\/${stack_tag}\//" "$stack_file"
     sed -i.bak -E "s/^  sha256 \"[^\"]+\"/  sha256 \"${stack_sha}\"/" "$stack_file"
     rm -f "${stack_file}.bak"
-    echo "    Updated autonomic-stack to ${ecosystem_baseline} (${stack_sha})"
+    echo "    Updated autonomic-stack to ${target_stack_version} (payload ${stack_tag}, ${stack_sha})"
     changed=1
   else
     echo "    Warning: Could not resolve sha256 for agent-body ${stack_tag}; skipping autonomic-stack bump." >&2
   fi
 else
-  echo "    autonomic-stack is up to date with ecosystem baseline (${ecosystem_baseline})"
+  echo "    autonomic-stack is up to date (${target_stack_version})"
 fi
 
 if [[ "$changed" -eq 1 ]]; then
