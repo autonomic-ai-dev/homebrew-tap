@@ -1,12 +1,12 @@
 class AgentTui < Formula
   desc "Terminal user interface dashboard for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-tui"
-  version "1.0.0-beta.1"
+  version "1.0.0-beta.3"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-tui/releases/download/v1.0.0-beta.1/agent-tui-aarch64-apple-darwin"
-    sha256 "9ebcde3c83807c2bbae63c1d26b191f69b37551f1a6281dac85bbd56faef2530"
+    url "https://github.com/autonomic-ai-dev/agent-tui/releases/download/v1.0.0-beta.3/agent-tui-aarch64-apple-darwin"
+    sha256 "8ee9924c448dfca527e31ee4cd739f79d4d4df30cbd5b7b0f27305312e7dc0bc"
   end
 
   def install

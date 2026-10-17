@@ -1,12 +1,12 @@
 class AgentBrain < Formula
   desc "Local cognitive graph, MCP server, and long-term memory engine"
   homepage "https://github.com/autonomic-ai-dev/agent-brain"
-  version "1.0.0-beta.2"
+  version "1.0.0-beta.3"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-brain/releases/download/v1.0.0-beta.2/agent-brain-aarch64-apple-darwin"
-    sha256 "2e615904353be76eb78af410972abec2f193aacd85896f4548592d4c7980e626"
+    url "https://github.com/autonomic-ai-dev/agent-brain/releases/download/v1.0.0-beta.3/agent-brain-aarch64-apple-darwin"
+    sha256 "d6d8d825630aef1f17e2e4bdae514a1987f46bf5015b21d71046ca4989a23c72"
   end
 
   def install

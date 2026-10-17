@@ -1,12 +1,12 @@
 class AgentSpine < Formula
   desc "Workflow DAG engine and execution controller for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-spine"
-  version "1.0.0-beta.1"
+  version "1.0.0-beta.3"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-spine/releases/download/v1.0.0-beta.1/agent-spine-aarch64-apple-darwin"
-    sha256 "3259f65a070507960534828dac6acfff7629e02b19a6259ee93f83aae2522080"
+    url "https://github.com/autonomic-ai-dev/agent-spine/releases/download/v1.0.0-beta.3/agent-spine-aarch64-apple-darwin"
+    sha256 "c6598262abe7b1eeff9c5b66a7efc21781c81bcc1eae4155957bd5a20e6b67e7"
   end
 
   def install

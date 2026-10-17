@@ -3,7 +3,7 @@ require_relative "autonomic_setup"
 class AutonomicStack < Formula
   desc "Full Autonomic AI organ stack (all peripheral binaries + NATS server)"
   homepage "https://github.com/autonomic-ai-dev/agent-body"
-  version "1.0.0-beta.1"
+  version "1.0.0-beta.3"
   license "MIT"
 
   depends_on "nats-server"
@@ -19,8 +19,8 @@ class AutonomicStack < Formula
   depends_on "autonomic-ai-dev/tap/agent-tui"
 
   # Minimal source payload for formula requirement
-  url "https://github.com/autonomic-ai-dev/agent-body/releases/download/v1.0.0-beta.1/agent-body-aarch64-apple-darwin"
-  sha256 "a5b51aa4abf88880c10b9176757439c6ea7ac61e0e9d063ddb893188273ffdf1"
+  url "https://github.com/autonomic-ai-dev/agent-body/releases/download/v1.0.0-beta.3/agent-body-aarch64-apple-darwin"
+  sha256 "eb92d3c0ce9368027c3f2fef337abcb8c02dc306713bc178a697b7c7fdf906c7"
 
   def install
     odie "autonomic-stack supports macOS Apple Silicon (arm64) only" if !OS.mac? || !Hardware::CPU.arm?
