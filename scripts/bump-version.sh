@@ -9,8 +9,13 @@ fi
 VERSION="${VERSION#v}"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-for f in "$ROOT/Formula/autonomic.rb" "$ROOT/Formula/autonomic-stack.rb"; do
-  sed -i.bak -E "s/^  version \"[^\"]+\"/  version \"${VERSION}\"/" "$f"
-  rm -f "${f}.bak"
-done
-echo "Bumped formulas to ${VERSION}"
+
+# Bump autonomic.rb
+autonomic_file="$ROOT/Formula/autonomic.rb"
+sed -i.bak -E "s/^  version \"[^\"]+\"/  version \"${VERSION}\"/" "$autonomic_file"
+rm -f "${autonomic_file}.bak"
+echo "Bumped Formula/autonomic.rb to ${VERSION}"
+
+# Run update-formulas to verify and synchronize baseline
+bash "$ROOT/scripts/update-formulas.sh"
+

@@ -76,21 +76,94 @@ for item in "${REPOS[@]}"; do
     echo "    Up to date (${version})"
   fi
 
-  # Also sync autonomic-stack if agent-body updated
-  if [[ "$repo" == "agent-body" ]]; then
-    stack_file="${ROOT_DIR}/Formula/autonomic-stack.rb"
-    stack_version="$(grep -m1 'version "' "$stack_file" | sed -E 's/.*version "([^"]+)".*/\1/' || true)"
-    stack_sha="$(grep -m1 'sha256 "' "$stack_file" | sed -E 's/.*sha256 "([^"]+)".*/\1/' || true)"
-    if [[ "$stack_version" != "$version" || "$stack_sha" != "$sha256" ]]; then
-      echo "    Updating autonomic-stack: ${stack_version} -> ${version}"
-      sed -i.bak -E "s/^  version \"[^\"]+\"/  version \"${version}\"/" "$stack_file"
-      sed -i.bak -E "s/download\/v[^\/]+\//download\/${latest_tag}\//" "$stack_file"
-      sed -i.bak -E "s/^  sha256 \"[^\"]+\"/  sha256 \"${sha256}\"/" "$stack_file"
-      rm -f "${stack_file}.bak"
-      changed=1
+done
+
+echo "==> Determining ecosystem baseline across all organ formulas..."
+stack_file="${ROOT_DIR}/Formula/autonomic-stack.rb"
+current_stack_version="$(grep -m1 'version "' "$stack_file" | sed -E 's/.*version "([^"]+)".*/\1/' || true)"
+
+ecosystem_baseline="$(python3 -c '
+import os, sys, re
+
+formulas = [
+    "autonomic.rb",
+    "agent-brain.rb",
+    "agent-spine.rb",
+    "agent-heart.rb",
+    "agent-nerves.rb",
+    "agent-muscle.rb",
+    "agent-immune.rb",
+    "agent-eyes.rb",
+    "agent-mouth.rb",
+    "agent-tui.rb"
+]
+
+formula_dir = sys.argv[1]
+
+def parse_baseline(v):
+    m = re.match(r"^(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z0-9]+)\.(\d+))?", v)
+    if not m:
+        return (0, 0, 0, 1, "", 0)
+    major, minor, patch, pre_tag, pre_num = m.groups()
+    is_release = 1 if not pre_tag else 0
+    return (int(major), int(minor), int(patch), is_release, pre_tag or "", int(pre_num or 0))
+
+def get_baseline_str(v):
+    m = re.match(r"^(\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+\.\d+)?)", v)
+    return m.group(1) if m else v
+
+baselines = []
+for f_name in formulas:
+    path = os.path.join(formula_dir, f_name)
+    if not os.path.exists(path):
+        continue
+    with open(path, "r") as f:
+        content = f.read()
+    m = re.search(r"version \"([^\"]+)\"", content)
+    if m:
+        ver = m.group(1)
+        base = get_baseline_str(ver)
+        baselines.append((base, parse_baseline(base)))
+
+if not baselines:
+    sys.exit(1)
+
+min_base = min(baselines, key=lambda x: x[1])[0]
+print(min_base)
+' "${ROOT_DIR}/Formula")"
+
+echo "    Current autonomic-stack version: ${current_stack_version}"
+echo "    Resolved ecosystem baseline:     ${ecosystem_baseline}"
+
+if [[ "$current_stack_version" != "$ecosystem_baseline" ]]; then
+  echo "==> All organs have reached baseline ${ecosystem_baseline}. Updating autonomic-stack.rb..."
+  stack_tag="v${ecosystem_baseline}"
+  stack_asset="agent-body-aarch64-apple-darwin"
+  stack_sha="$(gh release view "$stack_tag" -R "autonomic-ai-dev/agent-body" --json assets -q ".assets[] | select(.name == \"${stack_asset}\") | .digest" 2>/dev/null || true)"
+  if [[ -n "$stack_sha" && "$stack_sha" == sha256:* ]]; then
+    stack_sha="${stack_sha#sha256:}"
+  fi
+  if [[ -z "$stack_sha" ]]; then
+    url="https://github.com/autonomic-ai-dev/agent-body/releases/download/${stack_tag}/${stack_asset}"
+    tmp_asset="/tmp/${stack_asset}-$$-download"
+    if curl -fsSL "$url" -o "$tmp_asset" 2>/dev/null; then
+      stack_sha="$(shasum -a 256 "$tmp_asset" | awk '{print $1}')"
+      rm -f "$tmp_asset"
     fi
   fi
-done
+  if [[ -n "$stack_sha" ]]; then
+    sed -i.bak -E "s/^  version \"[^\"]+\"/  version \"${ecosystem_baseline}\"/" "$stack_file"
+    sed -i.bak -E "s/download\/v[^\/]+\//download\/${stack_tag}\//" "$stack_file"
+    sed -i.bak -E "s/^  sha256 \"[^\"]+\"/  sha256 \"${stack_sha}\"/" "$stack_file"
+    rm -f "${stack_file}.bak"
+    echo "    Updated autonomic-stack to ${ecosystem_baseline} (${stack_sha})"
+    changed=1
+  else
+    echo "    Warning: Could not resolve sha256 for agent-body ${stack_tag}; skipping autonomic-stack bump." >&2
+  fi
+else
+  echo "    autonomic-stack is up to date with ecosystem baseline (${ecosystem_baseline})"
+fi
 
 if [[ "$changed" -eq 1 ]]; then
   echo "CHANGES_MADE=true" >> "${GITHUB_OUTPUT:-/dev/null}"
