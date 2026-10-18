@@ -3,7 +3,7 @@ require_relative "autonomic_setup"
 class AutonomicStack < Formula
   desc "Full Autonomic AI organ stack (all peripheral binaries + NATS server)"
   homepage "https://github.com/autonomic-ai-dev/agent-body"
-  version "1.0.0-beta.3.3"
+  version "1.0.0-beta.3.4"
   license "MIT"
 
   depends_on "nats-server"
