@@ -18,10 +18,6 @@ class Autonomic < Formula
     bin.install_symlink "agent-body" => "autonomic"
   end
 
-  def post_install
-    AutonomicSetup.run_workspace_init(self)
-  end
-
   def caveats
     AutonomicSetup.shadow_warning + AutonomicSetup.finish_setup_caveats(meta_only: true)
   end

@@ -27,39 +27,16 @@ module AutonomicSetup
 
     <<~EOS
       #{stack}
-      What Homebrew runs automatically:
-        • `autonomic init` when ~/.autonomic does not exist
-
-      Finish setup manually:
+      To finish setup:
         1. Ensure `which autonomic` → #{HOMEBREW_PREFIX}/bin/autonomic (see shadow note above)
-        2. agent-brain install --global   (MCP + hooks; copies signed binary to ~/.local/bin on macOS)
-        3. Paste ~/.agent_brain/cursor-user-rules.mdc into Cursor Settings → User Rules
-        4. Optional: ~/.agent_brain/cursor-agent-brain-mode.mdc (same place) or `agent-brain mode install --global`
-        5. autonomic doctor               (verify organs + workspace)
-        6. autonomic start                (nerves + heart daemons)
+        2. autonomic init                 (initialize ~/.autonomic workspace)
+        3. agent-brain install --global   (MCP + hooks; copies signed binary to ~/.local/bin on macOS)
+        4. Paste ~/.agent_brain/cursor-user-rules.mdc into Cursor Settings → User Rules
+        5. Optional: ~/.agent_brain/cursor-agent-brain-mode.mdc (same place) or `agent-brain mode install --global`
+        6. autonomic doctor               (verify organs + workspace)
+        7. autonomic start                (nerves + heart daemons)
 
       Meta CLI only: brew install autonomic-ai-dev/tap/autonomic
     EOS
-  end
-
-  def self.run_workspace_init(formula)
-    workspace = Pathname.new(Dir.home)/".autonomic"
-    return if workspace.directory?
-
-    cli = formula.bin/"autonomic"
-    unless cli.exist?
-      formula.opoo "autonomic binary missing; run `agent-body init` after install."
-      return
-    end
-
-    formula.ohai "Initializing Autonomic workspace at #{workspace}"
-    if formula.quiet_system(cli, "init")
-      formula.ohai "Workspace ready: #{workspace}"
-    else
-      formula.opoo <<~EOS
-        autonomic init exited non-zero (formula install succeeded).
-        Finish setup manually: #{cli} init
-      EOS
-    end
   end
 end

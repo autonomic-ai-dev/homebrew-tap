@@ -32,10 +32,6 @@ class AutonomicStack < Formula
     chmod 0755, bin/"autonomic-stack"
   end
 
-  def post_install
-    AutonomicSetup.run_workspace_init(self)
-  end
-
   def caveats
     AutonomicSetup.shadow_warning + AutonomicSetup.finish_setup_caveats(meta_only: false)
   end
