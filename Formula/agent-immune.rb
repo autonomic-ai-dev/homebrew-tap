@@ -1,12 +1,12 @@
 class AgentImmune < Formula
   desc "Security vulnerability scanner and policy enforcer for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-immune"
-  version "1.0.0-beta.3.1"
+  version "1.0.0-beta.3.9"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-immune/releases/download/v1.0.0-beta.3.1/agent-immune-aarch64-apple-darwin"
-    sha256 "8a0a5c248964861146f752cedf14bbf28abea6f0f25dfa4b5a08c9f38e57fe60"
+    url "https://github.com/autonomic-ai-dev/agent-immune/releases/download/v1.0.0-beta.3.9/agent-immune-aarch64-apple-darwin"
+    sha256 "666ca18d88f7419185aef91cf5349dc52f69147c8143eb5abe288ec3b6090795"
   end
 
   def install
