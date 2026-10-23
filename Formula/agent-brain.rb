@@ -6,7 +6,7 @@ class AgentBrain < Formula
 
   if OS.mac? && Hardware::CPU.arm?
     url "https://github.com/autonomic-ai-dev/agent-brain/releases/download/v1.0.0-beta.3.11/agent-brain-aarch64-apple-darwin"
-    sha256 "e4a5079a09f86af13c4bfae491488e663c9a28ebdf52cf45d82296b8138564ab"
+    sha256 "45d8787261a01de79ad449280f3fb63ada8289883faee58f2558a5c7f3d83063"
   end
 
   def install
