@@ -11,6 +11,8 @@ class Autonomic < Formula
     sha256 "13298a8bc484af76e334ff3c95c4fe5200c5ed2695eb098afa71e96e1cc531cc"
   end
 
+  deprecate! date: "2026-10-26", because: "is out of scope. Autonomic AI now ships agent-brain and agent-spine only"
+
   def install
     odie "autonomic supports macOS Apple Silicon (arm64) only" if !OS.mac? || !Hardware::CPU.arm?
 
@@ -19,7 +21,7 @@ class Autonomic < Formula
   end
 
   def caveats
-    AutonomicSetup.shadow_warning + AutonomicSetup.finish_setup_caveats(meta_only: true)
+    AutonomicSetup.shadow_warning + AutonomicSetup.finish_setup_caveats
   end
 
   test do

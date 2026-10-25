@@ -6,16 +6,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 REPOS=(
-  "agent-body:autonomic"
   "agent-brain:agent-brain"
   "agent-spine:agent-spine"
-  "agent-heart:agent-heart"
-  "agent-nerves:agent-nerves"
-  "agent-muscle:agent-muscle"
-  "agent-immune:agent-immune"
-  "agent-eyes:agent-eyes"
-  "agent-mouth:agent-mouth"
-  "agent-tui:agent-tui"
 )
 
 changed=0
@@ -86,16 +78,8 @@ read -r ecosystem_baseline target_stack_version < <(python3 -c '
 import os, sys, re
 
 formulas = [
-    "autonomic.rb",
     "agent-brain.rb",
-    "agent-spine.rb",
-    "agent-heart.rb",
-    "agent-nerves.rb",
-    "agent-muscle.rb",
-    "agent-immune.rb",
-    "agent-eyes.rb",
-    "agent-mouth.rb",
-    "agent-tui.rb"
+    "agent-spine.rb"
 ]
 
 formula_dir = sys.argv[1]
