@@ -1,12 +1,12 @@
 class AgentMuscle < Formula
   desc "Sandboxed command execution and training backend for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-muscle"
-  version "1.0.0-beta.3.9"
+  version "1.0.0-rc1"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-muscle/releases/download/v1.0.0-beta.3.9/agent-muscle-aarch64-apple-darwin"
-    sha256 "918570f92e16ee63dddc6d3a5609f8a6c086b314a33b7cb7d7fce8530f9424dd"
+    url "https://github.com/autonomic-ai-dev/agent-muscle/releases/download/v1.0.0-rc1/agent-muscle-aarch64-apple-darwin"
+    sha256 "76444cf1497276a3ef39c84a3f1ba1a90d5a284eaeac65a8a8ce89242d03a3dc"
   end
 
   def install

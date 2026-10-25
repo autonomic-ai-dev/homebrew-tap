@@ -1,12 +1,12 @@
 class AgentHeart < Formula
   desc "Scheduled GC, token budget gate, and heartbeat monitor for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-heart"
-  version "1.0.0-beta.3.9"
+  version "1.0.0-rc1"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-heart/releases/download/v1.0.0-beta.3.9/agent-heart-aarch64-apple-darwin"
-    sha256 "64a8c4cb8546a5754ea9164b72ebd3dfe1c67f2158ea4fef63d8ef8b68d88cb2"
+    url "https://github.com/autonomic-ai-dev/agent-heart/releases/download/v1.0.0-rc1/agent-heart-aarch64-apple-darwin"
+    sha256 "6f2d77b71967236e84b627594480830e6d830b59a87d738bc7485caaaa9256ae"
   end
 
   def install

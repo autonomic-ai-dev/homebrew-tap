@@ -1,12 +1,12 @@
 class AgentMouth < Formula
   desc "AST command validator, Slack notifier, and approval gate for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-mouth"
-  version "1.0.0-beta.3.9"
+  version "1.0.0-rc1"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-mouth/releases/download/v1.0.0-beta.3.9/agent-mouth-aarch64-apple-darwin"
-    sha256 "e53958670db290e70493e2d821a96b564d74790c3c7ed09bd37e74efaf4a1004"
+    url "https://github.com/autonomic-ai-dev/agent-mouth/releases/download/v1.0.0-rc1/agent-mouth-aarch64-apple-darwin"
+    sha256 "9710d52fb844645be55298bf71c0e25daaa2825e5125ca2346148e2759ad1929"
   end
 
   def install

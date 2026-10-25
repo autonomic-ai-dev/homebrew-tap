@@ -1,12 +1,12 @@
 class AgentEyes < Formula
   desc "Visual perception, screen capture, and DOM inspector for Autonomic AI"
   homepage "https://github.com/autonomic-ai-dev/agent-eyes"
-  version "1.0.0-beta.3.9"
+  version "1.0.0-rc1"
   license "MIT"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/autonomic-ai-dev/agent-eyes/releases/download/v1.0.0-beta.3.9/agent-eyes-aarch64-apple-darwin"
-    sha256 "8429769b7c42bff7c9a474c1b6f556aecb862283b87c2f4876657688d84d8f40"
+    url "https://github.com/autonomic-ai-dev/agent-eyes/releases/download/v1.0.0-rc1/agent-eyes-aarch64-apple-darwin"
+    sha256 "ffdc4111a8cd8d88edffda0b7c8176f57ccd7007da6774f6c6d3816158569272"
   end
 
   def install
