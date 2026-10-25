@@ -3,7 +3,7 @@ require_relative "autonomic_setup"
 class AutonomicStack < Formula
   desc "Autonomic AI: agent-brain and agent-spine"
   homepage "https://github.com/autonomic-ai-dev/agent-brain"
-  version "1.0.0-rc1"
+  version "1.0.0-rc2"
   license "MIT"
 
   depends_on "autonomic-ai-dev/tap/agent-brain"
