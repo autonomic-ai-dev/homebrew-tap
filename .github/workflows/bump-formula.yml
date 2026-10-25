@@ -3,9 +3,9 @@ name: Bump formula versions
 on:
   workflow_dispatch:
   repository_dispatch:
-    types: [organ-release, agent-body-release, release]
+    types: [release]
   schedule:
-    # Hourly check for new releases across all organs
+    # Hourly check for new agent-brain and agent-spine releases
     - cron: "15 * * * *"
 
 permissions:
@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Update all organ formulas
+      - name: Update formulas
         id: update
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -32,7 +32,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [[ -n "$(git status --porcelain)" ]]; then
-            git add Formula/ Aliases/
+            git add Formula/
             git commit -m "chore: bump formulas to latest release digests"
             git push
           else
