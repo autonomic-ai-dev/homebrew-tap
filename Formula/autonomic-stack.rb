@@ -3,7 +3,9 @@ require_relative "autonomic_setup"
 class AutonomicStack < Formula
   desc "Autonomic AI: agent-brain and agent-spine"
   homepage "https://github.com/autonomic-ai-dev/agent-brain"
-  version "1.0.0-rc1"
+  url "https://github.com/autonomic-ai-dev/agent-brain/releases/download/v1.0.0-rc3/agent-brain-aarch64-apple-darwin"
+  version "1.0.0-rc3"
+  sha256 "07bc4bf904544c99e64726866a1f5e779be2a38aba9ed96d3aa0362e0a10c0b0"
   license "MIT"
 
   depends_on "autonomic-ai-dev/tap/agent-brain"
