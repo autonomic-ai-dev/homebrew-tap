@@ -9,11 +9,7 @@ brew tap autonomic-ai-dev/tap
 brew install agent-brain agent-spine
 ```
 
-Or install the bundle, which depends on both:
-
-```bash
-brew install autonomic-stack
-```
+Each formula installs on its own. Install only the one you need.
 
 Update with:
 
@@ -27,8 +23,6 @@ brew upgrade agent-brain agent-spine
 |---------|-------------|----------|
 | `agent-brain` | Skills, rules, and memory router for AI coding agents | `agent-brain` |
 | `agent-spine` | Deterministic YAML workflow runner | `agent-spine` |
-| `autonomic-stack` | Bundle that installs agent-brain and agent-spine | `autonomic-stack` (runs `agent-brain doctor`) |
-| `autonomic_setup` | Shared caveat text for the formulae above | none |
 
 ## Maintenance
 
