@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 REPOS=(
-  "agent-brain:agent-brain"
+  "tekmor:tekmor"
   "agent-spine:agent-spine"
 )
 

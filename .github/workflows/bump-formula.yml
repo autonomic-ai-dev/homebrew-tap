@@ -5,7 +5,7 @@ on:
   repository_dispatch:
     types: [release]
   schedule:
-    # Hourly check for new agent-brain and agent-spine releases
+    # Hourly check for new tekmor and agent-spine releases
     - cron: "15 * * * *"
 
 permissions:
